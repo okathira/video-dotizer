@@ -2,7 +2,7 @@
   "compilerOptions": {
     "mapRoot": "./sketch/",
     "module": "none",
-    "noImplicitAny": true,
+    "strict": true,
     "outFile": "./build/build.js",
     "preserveConstEnums": true,
     "removeComments": true,
