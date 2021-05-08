@@ -1,56 +1,48 @@
-// GLOBAL VARS & TYPES
-let numberOfShapes = 15
-let speed: p5.Element
+// INSTANCE MODE
+const sketch = (p: p5) => {
+  // GLOBAL VARS & TYPES
+  let input: p5.Element // input type='file'
+  let inputElem: p5.Element | null // picture
+  let inputMediaElem: p5.MediaElement | null // video
 
-// P5 WILL AUTOMATICALLY USE GLOBAL MODE IF A DRAW() FUNCTION IS DEFINED
-function setup() {
-  console.log('🚀 - Setup initialized - P5 is running')
+  // INSTANCE MODE
+  p.setup = () => {
+    console.log('🚀 - Setup initialized - P5 is running')
 
-  // FULLSCREEN CANVAS
-  createCanvas(windowWidth, windowHeight)
+    input = p.createFileInput(handleFile)
+    input.position(0, 0)
+  }
 
-  // SETUP SOME OPTIONS
-  rectMode(CENTER).noFill().frameRate(30)
+  // p5 WILL HANDLE REQUESTING ANIMATION FRAMES FROM THE BROWSER AND WIL RUN DRAW() EACH ANIMATION FROME
+  p.draw = () => {}
 
-  // SPEED SLIDER
-  speed = createSlider(0, 15, 3, 1)
-  speed.position(10, 10)
-  speed.style('width', '80px')
-}
+  // p5 WILL AUTO RUN THIS FUNCTION IF THE BROWSER WINDOW SIZE CHANGES
+  p.windowResized = () => {}
 
-// p5 WILL HANDLE REQUESTING ANIMATION FRAMES FROM THE BROWSER AND WIL RUN DRAW() EACH ANIMATION FROME
-function draw() {
-  // CLEAR BACKGROUND
-  background(0)
-  // TRANSLATE TO CENTER OF SCREEN
-  translate(width / 2, height / 2)
+  const handleFile = (f: p5.File) => {
+    initElems()
 
-  const colorsArr = ColorHelper.getColorsArray(numberOfShapes)
-  const baseSpeed = (frameCount / 500) * <number>speed.value()
-  for (var i = 0; i < numberOfShapes; i++) {
-    const npoints = 3 + i
-    const radius = 20 * i
-    const angle = TWO_PI / npoints
-    const spin = baseSpeed * (numberOfShapes - i)
-
-    strokeWeight(3 + i).stroke(colorsArr[i])
-
-    push()
-    rotate(spin)
-    // DRAW
-    beginShape()
-    for (let a = 0; a < TWO_PI; a += angle) {
-      let sx = cos(a) * radius
-      let sy = sin(a) * radius
-      vertex(sx, sy)
+    if (f.type === 'image') {
+      inputElem = p.createImg(f.data, 'your local file')
+    } else if (f.type === 'video') {
+      inputMediaElem = p.createVideo(f.data, videoLoad)
+      inputMediaElem.showControls()
     }
-    endShape(CLOSE)
-    // END:DRAW
-    pop()
+  }
+
+  const videoLoad = () => {
+    if (!inputMediaElem) return undefined
+
+    inputMediaElem.loop()
+  }
+
+  const initElems = () => {
+    inputElem?.remove()
+    inputMediaElem?.remove()
+
+    inputElem = null
+    inputMediaElem = null
   }
 }
 
-// p5 WILL AUTO RUN THIS FUNCTION IF THE BROWSER WINDOW SIZE CHANGES
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight)
-}
+new p5(sketch)
