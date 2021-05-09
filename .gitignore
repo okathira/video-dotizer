@@ -2,3 +2,4 @@ node_modules/
 .vscode/
 **/*.js
 **/*.js.map
+!node_modules/@types/p5/lib/addons/p5.dom.d.ts
