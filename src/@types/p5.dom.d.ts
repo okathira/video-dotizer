@@ -1,7 +1,7 @@
-import * as p5 from 'p5'
+import p5 from 'p5'
 
 declare module 'p5' {
-  interface MediaElement {
+  interface MediaElement extends Element {
     /**
      *   Extends p5.Element to handle audio and video. In
      *   addition to the methods of p5.Element, it also
@@ -540,7 +540,7 @@ declare module 'p5' {
     createVideo(
       src: string | string[],
       callback?: (...args: any[]) => any
-    ): MediaElement
+    ): VideoElement
 
     /**
      *   Creates a hidden HTML5 <audio> element in the DOM
@@ -816,7 +816,7 @@ declare module 'p5' {
      *   @return the width and height of the element in an
      *   object
      */
-    size(): object
+    size(): { width: number; height: number }
 
     /**
      *   Sets the width and height of the element. AUTO can
@@ -864,4 +864,6 @@ declare module 'p5' {
       fxn?: (...args: any[]) => any
     ): Element
   }
+
+  interface VideoElement extends MediaElement, Image {}
 }

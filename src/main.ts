@@ -13,7 +13,7 @@ const sketch = (p: p5) => {
 
   let input: p5.Element // input type='file'
   let inputElem: p5.Element | null // input picture
-  let inputMediaElem: p5.MediaElement | null // input video
+  let inputMediaElem: p5.VideoElement | null // input video
   let isVideoLoaded: boolean = false // input video
 
   let outputCanvas: p5.Element | null // processed video
