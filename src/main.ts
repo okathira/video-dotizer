@@ -1,10 +1,12 @@
+import p5 from 'p5'
+
 // INSTANCE MODE
 const sketch = (p: p5) => {
   // GLOBAL VARS & TYPES
-  let outX = 16 * 2
-  let outY = 12 * 2
-  let srcX = 320
-  let srcY = 240
+  let outX = 7 // 16 * 2
+  let outY = 7 // 12 * 2
+  let srcX = 480 // 4:3
+  let srcY = 360
   let pixelX = srcX / outX
   let pixelY = srcY / outY
   let FPS = 12
@@ -20,31 +22,31 @@ const sketch = (p: p5) => {
   p.setup = () => {
     console.log('🚀 - Setup initialized - P5 is running')
 
-    input = p.createFileInput(handleFile)
-    // input.position(0, 0)
-
     outputCanvas = p.createCanvas(srcX, srcY)
     // p.noSmooth()
     p.noStroke()
-
     p.frameRate(FPS)
+
+    input = p.createFileInput(handleFile)
+    // input.position(0, 0)
   }
 
   // p5 WILL HANDLE REQUESTING ANIMATION FRAMES FROM THE BROWSER AND WIL RUN DRAW() EACH ANIMATION FROME
   p.draw = () => {
     if (isVideoLoaded && inputMediaElem) {
-      // background(0);
+      // p.background(0)
 
       inputMediaElem.loadPixels()
       let pixelData: number[] = [] // モノクロ
 
       for (let y = 0; y < srcY; y += pixelY) {
         for (let x = 0; x < srcX; x += pixelX) {
-          const index = (srcX * (y + pixelY / 2) + (x + pixelX / 2)) * 4 // RGBA
+          const index =
+            (srcX * Math.floor(y + pixelY / 2) + Math.floor(x + pixelX / 2)) * 4 // RGBA
 
           p.fill(
             // 線と点の色
-            inputMediaElem.pixels[index] // モノクロ
+            inputMediaElem.pixels[index] // > 127 ? 255 : 0 // モノクロ
           )
           p.rect(x, y, pixelX, pixelY)
 
@@ -78,7 +80,7 @@ const sketch = (p: p5) => {
 
     // const mediaSize = inputMediaElem.size()
     // inputMediaElem.size(mediaSize.width / 4, mediaSize.height / 4)
-    inputMediaElem.size(320, 240) // 4:3 固定
+    inputMediaElem.size(srcX, srcY)
   }
 
   const initElems = () => {
