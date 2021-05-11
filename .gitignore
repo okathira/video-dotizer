@@ -1,4 +1,4 @@
 node_modules
-.cashe
+.cache
 dist
 !node_modules/@types/p5/lib/addons/p5.dom.d.ts
