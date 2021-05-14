@@ -1,4 +1,10 @@
 import p5 from 'p5'
+import { onMessage, publish } from './connection'
+// import { connect } from 'mqtt'
+
+const TOPIC_PUB = 'm5'
+const TOPIC_SUB = 'log'
+const BROKER = 'ws://localhost'
 
 // INSTANCE MODE
 const sketch = (p: p5) => {
@@ -29,6 +35,8 @@ const sketch = (p: p5) => {
 
     input = p.createFileInput(handleFile)
     // input.position(0, 0)
+
+    onMessage()
   }
 
   // p5 WILL HANDLE REQUESTING ANIMATION FRAMES FROM THE BROWSER AND WIL RUN DRAW() EACH ANIMATION FROME
@@ -46,7 +54,7 @@ const sketch = (p: p5) => {
 
           p.fill(
             // 線と点の色
-            inputMediaElem.pixels[index] // > 127 ? 255 : 0 // モノクロ
+            inputMediaElem.pixels[index] > 127 ? 255 : 0 // モノクロ
           )
           p.rect(x, y, pixelX, pixelY)
 
@@ -54,6 +62,7 @@ const sketch = (p: p5) => {
         }
       }
 
+      publish(JSON.stringify(pixelData))
       console.log(pixelData)
     }
   }
