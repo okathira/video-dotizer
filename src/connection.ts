@@ -1,6 +1,6 @@
 import { connect } from 'mqtt'
 
-const TOPIC_PUB = 'm5'
+const TOPIC_PUB = 'emoji'
 const TOPIC_SUB = 'log'
 const BROKER = 'ws://localhost'
 

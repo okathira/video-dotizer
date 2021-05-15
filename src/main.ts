@@ -1,21 +1,24 @@
 import p5 from 'p5'
 import { onMessage, publish } from './connection'
-// import { connect } from 'mqtt'
 
-const TOPIC_PUB = 'm5'
-const TOPIC_SUB = 'log'
-const BROKER = 'ws://localhost'
+const toMatrix = <T>(arr: T[], x: number) => {
+  const oldArray = [...arr]
+  const newArray: T[][] = []
+  while (oldArray.length) newArray.push(oldArray.splice(0, x))
+
+  return newArray
+}
 
 // INSTANCE MODE
 const sketch = (p: p5) => {
   // GLOBAL VARS & TYPES
-  let outX = 7 // 16 * 2
-  let outY = 7 // 12 * 2
+  let outX = 7
+  let outY = 7
   let srcX = 480 // 4:3
   let srcY = 360
   let pixelX = srcX / outX
   let pixelY = srcY / outY
-  let FPS = 12
+  let FPS = 11
 
   let input: p5.Element // input type='file'
   let inputElem: p5.Element | null // input picture
@@ -45,25 +48,34 @@ const sketch = (p: p5) => {
       // p.background(0)
 
       inputMediaElem.loadPixels()
-      let pixelData: number[] = [] // モノクロ
+      const pixelData: number[] = [] // モノクロ
 
-      for (let y = 0; y < srcY; y += pixelY) {
-        for (let x = 0; x < srcX; x += pixelX) {
+      for (let y = 0, yi = 0; yi < outY; yi++) {
+        for (let x = 0, xi = 0; xi < outX; xi++) {
           const index =
             (srcX * Math.floor(y + pixelY / 2) + Math.floor(x + pixelX / 2)) * 4 // RGBA
 
-          p.fill(
-            // 線と点の色
-            inputMediaElem.pixels[index] > 127 ? 255 : 0 // モノクロ
-          )
+          const grayPixel = inputMediaElem.pixels[index] > 127 ? 255 : 0 // モノクロ
+          p.fill(grayPixel) // 線と点の色
           p.rect(x, y, pixelX, pixelY)
 
-          pixelData.push(inputMediaElem.pixels[index]) // モノクロ
+          pixelData.push(grayPixel) // モノクロ
+
+          x += pixelX
         }
+        y += pixelY
       }
 
-      publish(JSON.stringify(pixelData))
+      const publishData = toMatrix(
+        pixelData.map((v) => (v ? 1 : 0)),
+        outX
+      )
+
+      const publishStr = JSON.stringify(publishData)
+      publish(publishStr)
+
       console.log(pixelData)
+      console.log(publishStr)
     }
   }
 
