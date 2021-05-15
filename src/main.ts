@@ -1,6 +1,6 @@
 import p5 from 'p5'
 import { publish } from './connection'
-import { toMatrix2d, toPixelIndex } from './function'
+import { toMatrix2d, toPixelIndex, toGrayScale } from './function'
 
 // INSTANCE MODE
 const sketch = (p: p5) => {
@@ -37,7 +37,7 @@ const sketch = (p: p5) => {
       // p.background(0)
 
       inputMediaElem.loadPixels()
-      const pixelData: number[] = [] // モノクロ
+      const grayPixels: number[] = [] // モノクロ
 
       for (let y = 0, yi = 0; yi < outY; yi++) {
         for (let x = 0, xi = 0; xi < outX; xi++) {
@@ -47,11 +47,17 @@ const sketch = (p: p5) => {
             srcX
           )
 
-          const grayPixel = inputMediaElem.pixels[index] > 127 ? 255 : 0 // モノクロ
-          p.fill(grayPixel) // 線と点の色
+          const grayScale = toGrayScale(
+            inputMediaElem.pixels[index],
+            inputMediaElem.pixels[index + 1],
+            inputMediaElem.pixels[index + 2]
+          )
+          const binaryPixel = grayScale > 127 ? 255 : 0
+
+          p.fill(binaryPixel) // 線と点の色
           p.rect(x, y, pixelX, pixelY)
 
-          pixelData.push(grayPixel) // モノクロ
+          grayPixels.push(binaryPixel)
 
           x += pixelX
         }
@@ -59,14 +65,14 @@ const sketch = (p: p5) => {
       }
 
       const publishData = toMatrix2d(
-        pixelData.map((v) => (v ? 1 : 0)), // 二値化
+        grayPixels.map((v) => (v ? 1 : 0)), // 二値化
         outX
       )
 
       const publishStr = JSON.stringify(publishData)
       publish(publishStr)
 
-      // console.log(pixelData)
+      // console.log(grayPixels)
       // console.log(publishStr)
     }
   }
