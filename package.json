@@ -1,11 +1,14 @@
 {
   "private": true,
+  "main": "./src/main.ts",
   "scripts": {
     "dev": "parcel src/index.html --open",
     "build": "parcel build src/index.html --public-url ./"
   },
   "devDependencies": {
+    "@types/mqtt": "^2.5.0",
     "@types/p5": "^0.9.1",
+    "node-red": "^1.3.4",
     "parcel-bundler": "^1.12.5",
     "typescript": "^4.2.4"
   },
