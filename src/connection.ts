@@ -2,7 +2,7 @@ import { connect } from 'mqtt'
 
 const TOPIC_PUB = 'emoji'
 const TOPIC_SUB = 'log'
-const BROKER = 'ws://localhost'
+const BROKER = 'ws://' + location.hostname
 
 const client = connect(BROKER)
 
